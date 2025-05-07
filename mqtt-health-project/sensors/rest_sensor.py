@@ -8,6 +8,7 @@ GATEWAY_URL = "http://gateway:5000/data"  # el gateway escucha en este puerto
 
 def generate_health_data():
     return {
+        "id": 'REST_SENSOR',
         "temperature": round(random.uniform(36.0, 38.5), 1),
         "heart_rate": random.randint(60, 100),
         "blood_pressure": f"{random.randint(110, 130)}/{random.randint(70, 85)}"
