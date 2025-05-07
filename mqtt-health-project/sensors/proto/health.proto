@@ -5,11 +5,12 @@ service HealthService {
 }
 
 message HealthData {
-  float temperature = 1;
-  int32 heart_rate = 2;
-  string blood_pressure = 3;
+  string id = 1;               // identificador del sensor
+  float temperature = 2;       // temperatura en °C
+  int32 heart_rate = 3;        // pulso en bpm
+  string blood_pressure = 4;   // presión arterial, e.g., "120/80"
 }
 
 message Response {
-  string status = 1;
+  string status = 1;           // "OK" o mensaje de error
 }

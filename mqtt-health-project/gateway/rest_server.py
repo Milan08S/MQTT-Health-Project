@@ -1,3 +1,4 @@
+# gateway/rest_server.py
 from flask import Flask, request
 import paho.mqtt.client as mqtt
 import json
@@ -12,7 +13,15 @@ client.connect(MQTT_BROKER, MQTT_PORT, 60)
 
 @app.route('/data', methods=['POST'])
 def receive_data():
-    data = request.json
+    # Extrae el JSON enviado por el sensor
+    body = request.json
+    # Construye el mensaje asegurando incluir sensor_id y métricas
+    data = {
+        "sensor_id":     body.get("id"),
+        "temperature":   body["temperature"],
+        "heart_rate":    body["heart_rate"],
+        "blood_pressure": body["blood_pressure"]
+    }
     print("REST recibido:", data)
     client.publish(MQTT_TOPIC, json.dumps(data))
     return '', 200

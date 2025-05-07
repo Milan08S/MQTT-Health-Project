@@ -3,11 +3,15 @@ version: "3.8"
 services:
   sensors:
     build: ./sensors
-    container_name: sensors
+    # Elimina el container_name para poder tener múltiples réplicas
+    # container_name: sensors
     depends_on:
       - gateway
     networks:
       - iot-net
+    environment:
+      # Opcional: forzar SENSOR_ID; si lo quitas, el código usará HOSTNAME
+      - SENSOR_ID=${SENSOR_ID:-}
 
   gateway:
     build: ./gateway
@@ -41,6 +45,7 @@ services:
       - db
     networks:
       - iot-net
+    command: sh -c "sleep 5 && python subscriber.py" # Espera 5 segundos antes de ejecutar el script
 
   db:
     image: postgres:15

@@ -1,3 +1,4 @@
+# gateway/ws_server.py
 import asyncio
 import websockets
 import json
@@ -11,8 +12,16 @@ mqtt_client = mqtt.Client()
 mqtt_client.connect(MQTT_BROKER, MQTT_PORT, 60)
 
 async def handler(websocket):
+    from datetime import datetime
     async for message in websocket:
-        data = json.loads(message)
+        payload = json.loads(message)
+        # Asegura que venga el id y las métricas
+        data = {
+            "sensor_id":     payload.get("id"),
+            "temperature":   payload["temperature"],
+            "heart_rate":    payload["heart_rate"],
+            "blood_pressure": payload["blood_pressure"]
+        }
         print("WebSocket recibido:", data)
         mqtt_client.publish(MQTT_TOPIC, json.dumps(data))
 
