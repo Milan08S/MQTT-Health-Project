@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+  sensors:
+    build: ./sensors
+    container_name: sensors
+    depends_on:
+      - gateway
+    networks:
+      - iot-net
+
+  gateway:
+    build: ./gateway
+    container_name: gateway
+    ports:
+      - "5000:5000"       # REST
+      - "50051:50051"     # gRPC
+      - "5002:5002"       # WebSocket
+    depends_on:
+      - mqtt
+    networks:
+      - iot-net
+
+  mqtt:
+    image: eclipse-mosquitto:2.0
+    container_name: mqtt-broker
+    ports:
+      - "1883:1883"       # MQTT
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    networks:
+      - iot-net
+
+  subscriber:
+    build: ./subscriber
+    container_name: subscriber
+    depends_on:
+      - mqtt
+      - db
+    networks:
+      - iot-net
+
+  db:
+    image: postgres:15
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: iotuser
+      POSTGRES_PASSWORD: iotpassword
+      POSTGRES_DB: healthdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - iot-net
+
+networks:
+  iot-net:
+
+volumes:
+  pgdata:
