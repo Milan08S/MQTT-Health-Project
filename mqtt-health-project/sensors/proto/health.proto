@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+service HealthService {
+  rpc SendHealthData (HealthData) returns (Response);
+}
+
+message HealthData {
+  float temperature = 1;
+  int32 heart_rate = 2;
+  string blood_pressure = 3;
+}
+
+message Response {
+  string status = 1;
+}
