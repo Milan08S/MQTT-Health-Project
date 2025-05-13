@@ -14,7 +14,7 @@ def generate_health_data():
     sensor_id = os.getenv("SENSOR_ID", "GRPC_SENSOR")
     return health_pb2.HealthData(
         id=sensor_id,
-        temperature=round(random.uniform(36.0, 38.5), 1),
+        temperature=float(f"{round(random.uniform(36.0, 38.5), 1):.1f}"),
         heart_rate=random.randint(60, 100),
         blood_pressure=f"{random.randint(110, 130)}/{random.randint(70, 85)}"
     )
