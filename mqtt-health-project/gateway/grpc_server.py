@@ -1,7 +1,8 @@
 # gateway/grpc_server.py
 
 from concurrent import futures
-import grpc
+import grpc.aio
+import logging
 import json
 from datetime import datetime
 import health_pb2
@@ -41,14 +42,24 @@ class HealthService(health_pb2_grpc.HealthServiceServicer):
         mqtt_client.publish(MQTT_TOPIC, json.dumps(data))
         return health_pb2.Response(status="OK")
 
+
 async def run_grpc():
-    await connect_mqtt() # Espera la conexión MQTT
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    await connect_mqtt()  # Espera la conexión MQTT
+    
+    # Usa el servidor asíncrono en lugar del síncrono
+    server = grpc.aio.server()
     health_pb2_grpc.add_HealthServiceServicer_to_server(HealthService(), server)
     server.add_insecure_port('[::]:50051')
-    print("Servidor gRPC iniciado en el puerto 50051")
-    server.start()
-    await server.wait_for_termination() # Usa await para la terminación asíncrona
+    
+    logging.info("Iniciando servidor gRPC en el puerto 50051")
+    await server.start()  # Iniciar de forma asíncrona
+    logging.info("Servidor gRPC iniciado y escuchando en puerto 50051")
+    
+    try:
+        await server.wait_for_termination()  # Ahora sí es asíncrono
+    except Exception as e:
+        logging.error(f"Error en servidor gRPC: {e}")
+        raise
 
 if __name__ == "__main__":
     asyncio.run(run_grpc())
