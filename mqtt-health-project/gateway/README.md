@@ -6,15 +6,15 @@ This module contains the **unified gateway** for the IoT Health Monitoring syste
 
 ## Files
 
+```text
 gateway/
-├── rest_server.py # REST server using Flask
-├── grpc_server.py # gRPC server using grpcio
-├── ws_server.py # WebSocket server using websockets + asyncio
-├── main.py # Launches all 3 servers in parallel
-├── requirements.txt # Python dependencies
-├── Dockerfile # Image definition for the unified gateway
-
-
+├── rest_server.py       # REST server using Flask
+├── grpc_server.py       # gRPC server using grpcio
+├── ws_server.py         # WebSocket server using websockets + asyncio
+├── main.py              # Launches all 3 servers in parallel
+├── requirements.txt     # Python dependencies
+├── Dockerfile           # Image definition for the unified gateway
+```
 ---
 
 ## How It Works

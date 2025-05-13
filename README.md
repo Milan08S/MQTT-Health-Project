@@ -60,16 +60,37 @@ mqtt-health-project/
 
 ## Components
 
-- [`gateway/`](./gateway): Servidor unificado que recibe datos vía REST, gRPC y WebSocket
-- [`sensors/`](./sensors): Publicadores simulados de datos de salud
-- [`subscriber/`](./subscriber): Persiste mensajes MQTT en PostgreSQL
-- [`docker-compose.yml`](./docker-compose.yml): Lanza todos los servicios y gestiona la red
+- [`gateway/`](./mqtt-health-project/gateway): Servidor unificado que recibe datos vía REST, gRPC y WebSocket
+- [`sensors/`](./mqtt-health-project/sensors): Publicadores simulados de datos de salud
+- [`subscriber/`](./mqtt-health-project/subscriber): Persiste mensajes MQTT en PostgreSQL
+- [`docker-compose.yml`](./mqtt-health-project/docker-compose.yml): Lanza todos los servicios y gestiona la red
+
+---
+
+## System Architecture
+
+The following diagram represents the high-level system architecture. It shows the relationship between sensors, the unified gateway, the MQTT broker, the subscriber, and the PostgreSQL database.
+
+<p align="center">
+  <img src="system-arch.png" alt="System Architecture Diagram" width="700"/>
+</p>
+
+---
+
+## Component-Code Relationship
+
+This diagram maps each component of the architecture to its corresponding folder and main files in the codebase.
+
+<p align="center">
+  <img src="component-relationship.png" alt="Component-Code Mapping Diagram" width="700"/>
+</p>
+
 
 ---
 
 ## Gateway
 
-👉 [README detallado del gateway aquí](./gateway/README.md)
+👉 [Detailed gateway README here](./gateway/README.md)
 
 Resumen:
 - Ejecuta REST en el puerto 5000
@@ -81,8 +102,8 @@ Resumen:
 
 ## 📡 Sensors
 
-👉 [README detallado de los sensores aquí](./sensors/README.md)
+👉 [Detailed sensors README here](./sensors/README.md)
 
-Resumen:
-- Los sensores REST, gRPC y WebSocket se ejecutan en contenedores separados
-- Cada uno envía periódicamente signos vitales simulados al gateway
+Summary:
+- REST, gRPC, and WebSocket sensors run in separate containers
+- Each sends simulated vital signs periodically to the gateway
