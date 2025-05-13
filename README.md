@@ -3,16 +3,16 @@ An IoT project where we simulate multiple health sensors and publish them with R
 
 ## Components
 
-- [`gateway/`](./gateway): Unified server receiving data via REST, gRPC, and WebSocket
-- [`sensors/`](./sensors): Simulated health data publishers
-- [`subscriber/`](./subscriber): Persists MQTT messages into PostgreSQL
-- [`docker-compose.yml`](./docker-compose.yml): Launches all services and manages networking
+- [`gateway/`](./mqtt-health-project/gateway): Unified server receiving data via REST, gRPC, and WebSocket
+- [`sensors/`](./mqtt-health-project/sensors): Simulated health data publishers
+- [`subscriber/`](./mqtt-health-project/subscriber): Persists MQTT messages into PostgreSQL
+- [`docker-compose.yml`](./mqtt-health-project/docker-compose.yml): Launches all services and manages networking
 
 ---
 
 ## Gateway
 
-👉 [Detailed gateway README here](./gateway/README.md)
+👉 [Detailed gateway README here](./mqtt-health-project/gateway/README.md)
 
 Summary:
 - Runs REST on port 5000
@@ -24,8 +24,72 @@ Summary:
 
 ## 📡 Sensors
 
-👉 [Detailed sensors README here](./sensors/README.md)
+👉 [Detailed sensors README here](./mqtt-health-project/sensors/README.md)
 
 Summary:
 - REST, gRPC, and WebSocket sensors run in separate containers
 - Each sends simulated vital signs periodically to the gateway
+
+---
+
+## Deployment Instructions
+
+Follow these steps to build, run, and test the entire IoT Health Monitoring system using Docker Compose.
+
+---
+
+### Step 1: Build the project
+
+Make sure you're in the root folder (same level as `docker-compose.yml`) and run:
+
+```bash
+docker-compose build
+```
+
+This builds all services: sensors, gateway, subscriber, and the MQTT broker.
+
+### Step 2: Run the system
+
+To launch all services in the background:
+
+```bash
+docker-compose up -d
+```
+If you want to launch multiple sensor containers:
+
+```bash
+docker-compose up --scale sensors=3 -d
+```
+### Step 3: Stop the system
+
+```bash
+docker-compose up --scale sensors=3 -d
+```
+
+### Step 4: Access the PostgreSQL database
+
+- 1. Connect to the running PostgreSQL container:
+
+```bash
+docker exec -it postgres-db bash
+```
+
+- 2. Inside the container, open the PostgreSQL client:
+
+```bash
+psql -U iotuser -d healthdata
+```
+- 3. Run a sample query:
+
+```bash
+SELECT * FROM health_readings;
+```
+
+## Additional Tips
+Make sure port 5000, 50051, 5002, and 1883 are available on your machine.
+
+If any service fails, check its logs using:
+
+```bash
+docker logs <container-name>
+```
