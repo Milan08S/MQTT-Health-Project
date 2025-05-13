@@ -1,22 +1,33 @@
-FROM python:3.9-slim
+# 1. Usa una versión real de Python (3.13 aún no existe)
+FROM python:3.10-slim
 
 WORKDIR /app
 
+# 3. Copia y bloquea la instalación de dependencias en un solo layer
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip \
+ && pip install --no-cache-dir -r requirements.txt
 
-# Copiar todos los archivos Python y protobuf
-COPY *.py *.proto ./
+# 4. Copia sólo lo necesario (mantiene el contexto limpio)
+COPY *.py *.proto entrypoint.sh ./
 
-# Compilar los archivos proto (solo si hay alguno)
+# 5. Compila los .proto *antes* de instalar grpcio-tools
 RUN if ls *.proto 1> /dev/null 2>&1; then \
-    pip install grpcio-tools && \
-    python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. *.proto; \
+      pip install --no-cache-dir grpcio-tools && \
+      python -m grpc_tools.protoc -I. \
+        --python_out=. --grpc_python_out=. *.proto; \
     fi
 
-# Copiar el script de entrada
-COPY entrypoint.sh .
+# 6. Asegura permisos de ejecución
 RUN chmod +x entrypoint.sh
 
-# Usar el script de entrada como punto de entrada
-CMD ["./entrypoint.sh"]
+# 7. Expone puertos (ajusta según tu sensor)
+# EXPOSE 50051 8080
+
+# 8. Añade un HEALTHCHECK básico (opcional)
+HEALTHCHECK --interval=30s --timeout=5s \
+  CMD pgrep -f websocket_sensor.py || exit 1
+
+# 9. Usa ENTRYPOINT + CMD para separar lógica y argumentos
+ENTRYPOINT ["./entrypoint.sh"]
+CMD []

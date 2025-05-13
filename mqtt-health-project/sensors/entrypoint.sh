@@ -1,41 +1,36 @@
 #!/bin/bash
+set -euo pipefail
 
-# Si no se ha establecido SENSOR_ID, usar el hostname del contenedor
-if [ -z "$SENSOR_ID" ]; then
-  export SENSOR_ID=$(hostname)
-fi
-
+# SENSOR_ID por defecto = hostname
+: "${SENSOR_ID:=$(hostname)}"
 echo "Iniciando sensor con ID: $SENSOR_ID"
 
-# Verificar el tipo de sensor a ejecutar
-case "$SENSOR_TYPE" in
-  "rest")
+# Forzar minúsculas
+sensor_type="${SENSOR_TYPE:-}"
+sensor_type="${sensor_type,,}"
+
+# Si no viene SENSOR_TYPE, extraerlo del ID (parte tras último guión bajo)
+if [ -z "$sensor_type" ]; then
+  sensor_type="${SENSOR_ID##*_}"
+  sensor_type="${sensor_type,,}"
+  echo "Detectado tipo de sensor por ID: $sensor_type"
+fi
+
+case "$sensor_type" in
+  rest)
     echo "Ejecutando sensor REST"
-    python rest_sensor.py
+    exec python rest_sensor.py
     ;;
-  "ws")
+  ws)
     echo "Ejecutando sensor WebSocket"
-    python websocket_sensor.py
+    exec python websocket_sensor.py
     ;;
-  "grpc")
+  grpc)
     echo "Ejecutando sensor gRPC"
-    python grpc_sensor.py
+    exec python grpc_sensor.py
     ;;
   *)
-    # Si no se especifica un tipo, intentar detectar qué script ejecutar
-    # basado en el ID del sensor
-    if [[ "$SENSOR_ID" == *"REST"* ]]; then
-      echo "Detectando tipo REST basado en ID del sensor: $SENSOR_ID"
-      python rest_sensor.py
-    elif [[ "$SENSOR_ID" == *"WS"* ]]; then
-      echo "Detectando tipo WS basado en ID del sensor: $SENSOR_ID"
-      python websocket_sensor.py
-    elif [[ "$SENSOR_ID" == *"GRPC"* ]]; then
-      echo "Detectando tipo GRPC basado en ID del sensor: $SENSOR_ID"
-      python grpc_sensor.py
-    else
-      echo "No se pudo determinar el tipo de sensor. Ejecutando sensor REST por defecto."
-      python rest_sensor.py
-    fi
+    echo >&2 "ERROR: Tipo de sensor inválido: '$sensor_type'"
+    exit 1
     ;;
 esac
