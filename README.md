@@ -9,7 +9,6 @@ An IoT project where we simulate multiple health sensors and publish them with R
 - [`docker-compose.yml`](./mqtt-health-project/docker-compose.yml): Launches all services and manages networking
 
 ---
----
 
 ## System Architecture
 
