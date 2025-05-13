@@ -5,7 +5,7 @@ This module contains the **simulated health data publishers** for the IoT Health
 ---
 
 ## Files
-
+```text
 sensors/
 ├── rest_sensor.py # Sends data via REST (HTTP POST)
 ├── grpc_sensor.py # Sends data via gRPC
@@ -16,8 +16,7 @@ sensors/
 ├── health_pb2_grpc.py # gRPC auto-generated service stubs
 ├── requirements.txt # Python dependencies
 ├── Dockerfile # Image definition for all sensors
-
-
+```
 ---
 
 ## How It Works

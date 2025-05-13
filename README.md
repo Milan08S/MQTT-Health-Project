@@ -9,6 +9,28 @@ An IoT project where we simulate multiple health sensors and publish them with R
 - [`docker-compose.yml`](./mqtt-health-project/docker-compose.yml): Launches all services and manages networking
 
 ---
+---
+
+## System Architecture
+
+The following diagram represents the high-level system architecture. It shows the relationship between sensors, the unified gateway, the MQTT broker, the subscriber, and the PostgreSQL database.
+
+<p align="center">
+  <img src="system-arch.png" alt="System Architecture Diagram" width="700"/>
+</p>
+
+---
+
+## Component-Code Relationship
+
+This diagram maps each component of the architecture to its corresponding folder and main files in the codebase.
+
+<p align="center">
+  <img src="component-relationship.png" alt="Component-Code Mapping Diagram" width="700"/>
+</p>
+
+
+---
 
 ## Gateway
 
