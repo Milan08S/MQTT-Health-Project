@@ -1,14 +1,22 @@
-# Dockerfile para sensor REST con imagen segura
-FROM python:3.13-slim
-
-# Actualizar el sistema base
-RUN apt-get update && apt-get upgrade -y
+FROM python:3.9-slim
 
 WORKDIR /app
 
-COPY . /app
-
-# Instala solo las dependencias de Python
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["python", "rest_sensor.py"]
+# Copiar todos los archivos Python y protobuf
+COPY *.py *.proto ./
+
+# Compilar los archivos proto (solo si hay alguno)
+RUN if ls *.proto 1> /dev/null 2>&1; then \
+    pip install grpcio-tools && \
+    python -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. *.proto; \
+    fi
+
+# Copiar el script de entrada
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
+
+# Usar el script de entrada como punto de entrada
+CMD ["./entrypoint.sh"]

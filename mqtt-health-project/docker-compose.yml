@@ -1,17 +1,68 @@
 version: "3.8"
 
 services:
-  sensors:
+  # Sensores REST
+  rest_sensor_1:
     build: ./sensors
-    # Elimina el container_name para poder tener múltiples réplicas
-    # container_name: sensors
     depends_on:
       - gateway
     networks:
       - iot-net
     environment:
-      # Opcional: forzar SENSOR_ID; si lo quitas, el código usará HOSTNAME
-      - SENSOR_ID=${SENSOR_ID:-}
+      - SENSOR_ID=REST_SENSOR_1
+      - SENSOR_TYPE=rest
+
+  rest_sensor_2:
+    build: ./sensors
+    depends_on:
+      - gateway
+    networks:
+      - iot-net
+    environment:
+      - SENSOR_ID=REST_SENSOR_2
+      - SENSOR_TYPE=rest
+
+  # Sensores WebSocket
+  ws_sensor_1:
+    build: ./sensors
+    depends_on:
+      - gateway
+    networks:
+      - iot-net
+    environment:
+      - SENSOR_ID=WS_SENSOR_1
+      - SENSOR_TYPE=ws
+
+  ws_sensor_2:
+    build: ./sensors
+    depends_on:
+      - gateway
+    networks:
+      - iot-net
+    environment:
+      - SENSOR_ID=WS_SENSOR_2
+      - SENSOR_TYPE=ws
+
+  # Sensores gRPC
+  grpc_sensor_1:
+    build: ./sensors
+    depends_on:
+      - gateway
+    networks:
+      - iot-net
+    environment:
+      - SENSOR_ID=GRPC_SENSOR_1
+      - SENSOR_TYPE=grpc
+
+  grpc_sensor_2:
+    build: ./sensors
+    depends_on:
+      - gateway
+    networks:
+      - iot-net
+    environment:
+      - SENSOR_ID=GRPC_SENSOR_2
+      - SENSOR_TYPE=grpc
 
   gateway:
     build: ./gateway
