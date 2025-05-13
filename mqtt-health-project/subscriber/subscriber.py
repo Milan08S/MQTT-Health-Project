@@ -36,11 +36,29 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     payload = json.loads(msg.payload)
+
+    # Redondear temperatura a 1 decimal
+    temp_rounded = round(payload["temperature"], 1)
+
     cur.execute(
-      "INSERT INTO health_readings(sensor_id, temperature, heart_rate, blood_pressure) VALUES(%s,%s,%s,%s)",
-      (payload["sensor_id"], payload["temperature"], payload["heart_rate"], payload["blood_pressure"])
+        """
+        INSERT INTO health_readings(
+            sensor_id,
+            temperature,
+            heart_rate,
+            blood_pressure
+        ) VALUES (%s, %s, %s, %s)
+        """,
+        (
+            payload["sensor_id"],
+            temp_rounded,
+            payload["heart_rate"],
+            payload["blood_pressure"]
+        )
     )
-    print("Guardado en BD:", payload)
+    print(f"Guardado en BD: sensor_id={payload['sensor_id']}, temperature={temp_rounded}, "
+          f"heart_rate={payload['heart_rate']}, blood_pressure={payload['blood_pressure']}")
+
 
 # Nota: La siguiente línea generará una advertencia de deprecación, pero funciona
 # Para versiones más recientes de paho-mqtt, deberías usar:
